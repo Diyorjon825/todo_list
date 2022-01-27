@@ -19,6 +19,7 @@ class _MyAppState extends State<MyApp> {
       ),
       routes: _navigation.routes,
       initialRoute: _navigation.initialRoute,
+      onGenerateRoute: (settings) => _navigation.onGeneratedRoute(settings),
     );
   }
 }

@@ -20,24 +20,67 @@ class HomePageModel extends ChangeNotifier {
     setup();
   }
 
+  void setup() async {
+    _groupBox = BoxProvider.instances.openGroupBox();
+
+    _updateListGroup();
+    _updateListTask();
+    _addListener();
+    notifyListeners();
+  }
+
   Future<void> _updateListGroup() async {
     final box = await _groupBox;
     _listGroup = box?.values.toList() ?? [];
     notifyListeners();
   }
 
-  void setup() {
-    _groupBox = BoxProvider.instances.openGroupBox();
-    _taskBox = BoxProvider.instances.openTaskBox(currentGroup);
-    _updateListGroup();
-    _addGroupListener();
+  Future<void> _updateListTask() async {
+    final groupKey = (await _groupBox)?.keyAt(currentGroup) ?? 0;
+    _taskBox = BoxProvider.instances.openTaskBox(groupKey);
+    final box = await _taskBox;
+    _listTask = box?.values.toList() ?? [];
+    (await _taskBox)?.listenable().addListener(() => _updateListTask());
     notifyListeners();
   }
 
-  void _addGroupListener() async {
+  void _addListener() async {
     (await _groupBox)?.listenable().addListener(() => _updateListGroup());
+    notifyListeners();
   }
 
-  void addNewTask(BuildContext context) =>
-      Navigator.pushNamed(context, MainNavigationRoutes.homeForum);
+  void changeGroup(int index) {
+    currentGroup = index;
+    _updateListTask();
+  }
+
+  void addNewGroup(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      MainNavigationRoutes.homeForum,
+    );
+  }
+
+  void addNewTask(BuildContext context) async {
+    final groupKey = (await _groupBox)?.keyAt(currentGroup) ?? 0;
+
+    Navigator.pushNamed(
+      context,
+      MainNavigationRoutes.taskForum,
+      arguments: groupKey,
+    );
+  }
+
+  void deleteGroup(BuildContext context, int index) async {
+    final groupBox = await _groupBox;
+    final taskBox = await _taskBox;
+    await taskBox?.deleteFromDisk();
+    await groupBox?.deleteAt(index);
+    Navigator.pop(context);
+  }
+
+  void deleteTask(int index) async {
+    final taskBox = await _taskBox;
+    await taskBox?.deleteAt(index);
+  }
 }

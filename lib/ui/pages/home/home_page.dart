@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:simple_speed_dial/simple_speed_dial.dart';
 import 'package:todo_list/library/widget/provider.dart';
-import 'package:todo_list/ui/pages/modules/modules.dart';
+import 'package:todo_list/ui/pages/home/modules/modules.dart';
 
 import 'home_page_model.dart';
 
@@ -107,7 +106,7 @@ class BodyWidget extends StatelessWidget {
                 ),
               ),
               IconButton(
-                  onPressed: () => model?.addNewTask(context),
+                  onPressed: () => model?.addNewGroup(context),
                   icon: const Icon(
                     Icons.add,
                     color: Color.fromRGBO(156, 180, 249, 1),
@@ -141,7 +140,7 @@ class BodyWidget extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => model?.addNewTask(context),
                 icon: const Icon(
                   Icons.add,
                   color: Color.fromRGBO(156, 180, 249, 1),
